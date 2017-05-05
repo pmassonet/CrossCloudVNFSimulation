@@ -1,0 +1,134 @@
+"configuration" : "setup VNF for Cloud1 and Cloud2"
+"clouds" : 
+    "cloud1": 
+        "CloudManager": "cloud_man_1"
+        "Network_segment": "network_segment_1"
+        "VNF": 
+            "DPI_1" :
+                "vnf_type" : "config_DPI_1"
+                "network_segment" : "network_segment_1"
+            "FW_1" : 
+                "vnf_type" : "config_FW_1"
+                "network_segment" : "network_segment_1"
+            "ENCRYPT_1" : 
+                "vnf_type" : "ENCRYPT"
+                "identifier" : "ENCRYPT_1_to_2"
+                "network_segment" : "network_segment_1"
+                "incomingIP" : "localhost"
+                "incomingPort" : "10023"
+                "incomingPrivateKeyFile" : "server.key"
+                "incomingPublicKeyFile" : "server.crt"
+                "outgoingIP" : "localhost"
+                "outgoingPort" : "10024"
+                "outgoingPublicKeyFile" : "server.crt"
+            "DECRYPT_1" :
+                "vnf_type" : "DECRYPT"
+                "identifier" : "DECRYPT_1_from_2"
+                "network_segment" : "network_segment_1"
+                "incomingIP" : "localhost"
+                "incomingPort" : "10027"
+                "incomingPrivateKeyFile" : "server.key"
+                "incomingPublicKeyFile" : "server.crt"
+                "outgoingIP" : "localhost"
+                "outgoingPort" : "10028"
+                "outgoingPublicKeyFile" : "server.crt"
+        "VMS": 
+            "WRITER_1" :
+                "vnf_type" : "WRITER"
+                "identifier" : "WRITER_1_to_2"
+                "network_segment" : "network_segment_1"
+                "incomingIP" : "localhost"
+                "incomingPort" : "10028"
+                "incomingPrivateKeyFile" : "server.key"
+                "incomingPublicKeyFile" : "server.crt"
+                "outgoingIP" : "localhost"
+                "outgoingPort" : "10023"
+                "outgoingPublicKeyFile" : "server.crt"
+            "LISTENER_1" :
+                "vnf_type" : "LISTENER"
+                "identifier" : "LISTENER_1_from_2"
+                "network_segment" : "network_segment_1"
+                "incomingIP" : "localhost"
+                "incomingPort" : "10028"
+                "incomingPrivateKeyFile" : "server.key"
+                "incomingPublicKeyFile" : "server.crt"
+                "outgoingIP" : "localhost"
+                "outgoingPort" : "10023"
+                "outgoingPublicKeyFile" : "server.crt"
+        "OutgoingChaining":
+            "out_chaining1" : ["DPI_1", "FW_1", "ENCRYPT_1"]     
+        "IncomingChaining":
+            "in_chaining" : ["DPI_1", "FW_1", "DECRYPT_1"]
+            "startup-order" : ["LISTENER_1_from_2", "DECRYPT_1_from_2", "ENCRYPT_2_to_1", "WRITER_2_to_1"]   
+        "SecurityGroup": 
+            "id" : "sec_group_1_trusted"
+            "members" : ["VM_1.1", "VM_1.2"]
+        "AuthorizedProtocols":
+            "protocols" : ["HTTP", "HTTPS"]
+    "cloud2": 
+        "CloudManager": "cloud_man_2" 
+        "VMS" :
+            "WRITER_2" :
+                "vnf_type" : "WRITER"
+                "identifier" : "WRITER_2_to_1"
+                "network_segment" : "network_segment_1"
+                "incomingIP" : "localhost"
+                "incomingPort" : "10028"
+                "incomingPrivateKeyFile" : "server.key"
+                "incomingPublicKeyFile" : "server.crt"
+                "outgoingIP" : "localhost"
+                "outgoingPort" : "10026"
+                "outgoingPublicKeyFile" : "server.crt"
+            "LISTENER_2" :
+                "vnf_type" : "LISTENER"
+                "identifier" : "LISTENER_2_from_1"
+                "network_segment" : "network_segment_1"
+                "incomingIP" : "localhost"
+                "incomingPort" : "10025"
+                "incomingPrivateKeyFile" : ""
+                "incomingPublicKeyFile" : ""
+                "outgoingIP" : "localhost"
+                "outgoingPort" : "00000"
+                "outgoingPublicKeyFile" : ""
+        "Network_segment": "network_segment_2"
+        "VNF": 
+            "DPI_2" :
+                "vnf_type" : "config_DPI_2"
+                "network_segment" : "network_segment_2"
+            "FW_2" :
+                "vnf_type" : "config_FW_2"
+                "network_segment" : "network_segment_2"
+            "ENCRYPT_2" : 
+                "vnf_type" : "ENCRYPT"
+                "identifier" : "ENCRYPT_2_to_1"
+                "network_segment" : "network_segment_2"
+                "incomingIP" : "localhost"
+                "incomingPort" : "10026"
+                "incomingPrivateKeyFile" : "server.key"
+                "incomingPublicKeyFile" : "server.crt"
+                "outgoingIP" : "localhost"
+                "outgoingPort" : "10027"
+                "outgoingPublicKeyFile" : "server.crt"
+            "DECRYPT_2" :
+                "vnf_type" : "DECRYPT"
+                "identifier" : "DECRYPT_2_from_1"
+                "network_segment" : "network_segment_2"
+                "incomingIP" : "localhost"
+                "incomingPort" : "10024"
+                "incomingPrivateKeyFile" : "server.key"
+                "incomingPublicKeyFile" : "server.crt"
+                "outgoingIP" : "localhost"
+                "outgoingPort" : "10025"
+                "outgoingPublicKeyFile" : ""
+        "OutgoingChaining" : 
+            "out_chaining2" : ["DPI_2", "FW_2", "ENCRYPT_2"]     
+        "IncomingChaining":
+            "in_chaining2" : ["DPI_2", "FW_2", "DECRYPT_2"]
+            "startup-order" : ["LISTENER_2_from_1", "DECRYPT_2_from_1", "ENCRYPT_1_to_2", "WRITER_1_to_2"]
+        "SecurityGroup":
+            "id" : "sec_group_2_trusted"
+            "members" : ["VM_2.1", "VM_2.2"]
+            "id" : "sec_group_3_untrusted"
+            "members" : ["VM_1.1", "VM_2.1"]
+        "AuthorizedProtocols":
+            "protocols" : ["HTTP", "HTTPS"]

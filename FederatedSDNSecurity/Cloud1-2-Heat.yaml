@@ -1,0 +1,41 @@
+# Heat template for cloud 1 and cloud 2 VNF
+cloud1:
+    CloudManager: cloud_man_1 
+    VM: 
+        VM-IST:
+            id: "VM_1.1"
+    Network_segments:
+        NET-SEG-IST: 
+            id: network_segment_1
+    VNF:
+        VNF-IST:
+            id: DPI_1
+            type: DPI
+            configuration: config_DPI_1
+            network_segment: network_segment_1
+        VNF-IST:
+            id: FW_1
+            type: FW
+            configuration: config_FW_1
+            network_segment: network_segment_1
+        VNF-IST:
+            id: ENCRYPT_1
+            type: ENCRYPT
+            configuration: config_ENCRYPT_1
+            network_segment: network_segment_1
+        VNF-IST:
+            id: DECRYPT_1
+            type : DECRYPT
+            configuration: config_DECRYPT_1
+            network_segment: network_segment_1
+    OutgoingChaining:
+        OC-IST:
+            out_chaining1: ["DPI_1", "FW_1", "ENCRYPT_1"]
+    IncomingChaining:
+        IC-IST:
+            in_chaining1: ["DPI_1", "FW_1", "DECRYPT_1"]
+    SecurityGroup:
+        secGroup-IST:
+            id: sec_group_2_trusted
+            members: [VM_1.1, VM_1.2]
+            authorizedProtocols: [HTTP, HTTPS]
